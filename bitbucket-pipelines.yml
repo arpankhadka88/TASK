@@ -20,17 +20,7 @@ pipelines:
               exit 1
             fi
 
-          # List commits after the tag
+          # List commits after the tag and save to artifact
           - |
-            echo "📌 Commits after tag ${REFERENCE_TAG}:"
-            git log "${REFERENCE_TAG}"..HEAD --oneline
-
-          # List files changed after the tag
-          - |
-            echo "📁 Files changed after tag ${REFERENCE_TAG}:"
-            git diff --name-only "${REFERENCE_TAG}"..HEAD
-
-          # Show detailed changes (file + hunks)
-          - |
-            echo "🧩 Detailed changes:"
-            git diff "${REFERENCE_TAG}"..HEAD
+            echo "📌 Commits after tag ${REFERENCE_TAG}:" | tee commits.txt
+            git
