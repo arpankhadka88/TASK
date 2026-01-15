@@ -9,7 +9,7 @@ pipelines:
           - git fetch --tags
           
           # Set reference tag
-          - export REFERENCE_TAG="v1.0-tests"
+          - export REFERENCE_TAG="v1.1-tests"
           
           # List changed files
           - |
