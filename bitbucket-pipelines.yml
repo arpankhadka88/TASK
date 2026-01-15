@@ -5,22 +5,34 @@ pipelines:
     - step:
         name: Changes since tagged commit
         script:
-          # Fetch all branches and tags
           - git fetch --all --tags
 
-          # Print reference tag and current commit safely
           - |
             echo "Reference tag: ${REFERENCE_TAG}"
             echo "Current commit: $(git rev-parse --short HEAD)"
 
-          # Validate tag exists
           - |
             if ! git rev-parse "${REFERENCE_TAG}" >/dev/null 2>&1; then
               echo "❌ Tag '${REFERENCE_TAG}' does not exist"
               exit 1
             fi
 
-          # List commits after the tag and save to artifact
+          # Save commits to artifact
           - |
             echo "📌 Commits after tag ${REFERENCE_TAG}:" | tee commits.txt
-            git
+            git log "${REFERENCE_TAG}"..HEAD --oneline | tee -a commits.txt
+
+          # Save changed files to artifact
+          - |
+            echo "📁 Files changed after tag ${REFERENCE_TAG}:" | tee changed-files.txt
+            git diff --name-only "${REFERENCE_TAG}"..HEAD | tee -a changed-files.txt
+
+          # Save detailed diff to artifact
+          - |
+            echo "🧩 Detailed changes:" | tee detailed-diff.txt
+            git diff "${REFERENCE_TAG}"..HEAD | tee -a detailed-diff.txt
+
+        artifacts:
+          - commits.txt
+          - changed-files.txt
+          - detailed-diff.txt
