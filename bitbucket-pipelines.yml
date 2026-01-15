@@ -32,19 +32,7 @@ pipelines:
             echo "🧩 Detailed changes:" | tee detailed-diff.txt
             git diff "${REFERENCE_TAG}"..HEAD | tee -a detailed-diff.txt
 
-          # Save actual changed files as artifacts
-          - |
-            echo "📂 Copying actual changed files to artifact folder"
-            mkdir -p changed-files-artifact
-            git diff --name-only "${REFERENCE_TAG}"..HEAD | while read file; do
-              if [ -f "$file" ]; then
-                mkdir -p "changed-files-artifact/$(dirname "$file")"
-                cp "$file" "changed-files-artifact/$file"
-              fi
-            done
-
         artifacts:
           - commits.txt
           - changed-files.txt
           - detailed-diff.txt
-          - changed-files-artifact/**
