@@ -1,0 +1,22 @@
+image: atlassian/default-image:latest
+
+pipelines:
+  default:
+    - step:
+        name: Checkout and Compare
+        script:
+          # Clone the repository (Bitbucket does this automatically, but ensuring we have tags)
+          - git fetch --tags
+          
+          # Set reference tag
+          - export REFERENCE_TAG="v1.1-tests"
+          
+          # List changed files
+          - |
+            changedFiles=$(git diff --name-only $REFERENCE_TAG HEAD)
+            if [ -n "$changedFiles" ]; then
+              echo "Files changed since tag $REFERENCE_TAG:"
+              echo "$changedFiles"
+            else
+              echo "No files changed since tag $REFERENCE_TAG"
+            fi
